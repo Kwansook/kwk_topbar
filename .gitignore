@@ -1,0 +1,5 @@
+/cache/*
+/var/*
+/log/*
+/vendor/*
+/composer.lock
