@@ -106,7 +106,7 @@ class Kwk_topbar extends Module
         foreach (Language::getLanguages(true) as $lang) {
             $tab->name[$lang['id_lang']] = 'Top Bar';
         }
-        $tab->id_parent = (int)Tab::getIdFromClassName('AdminModules');
+        $tab->id_parent = (int)Tab::getIdFromClassName('AdminParentThemes');
         $tab->module = $this->name;
         return $tab->add();
     }
@@ -228,7 +228,7 @@ class Kwk_topbar extends Module
             'default_bg_color' => Configuration::get('KWK_TOPBAR_DEFAULT_BG_COLOR', '#6b6b6b'),
             'default_text_color' => Configuration::get('KWK_TOPBAR_DEFAULT_TEXT_COLOR', '#ffffff'),
         ]);
-        
+
         return $this->display(__FILE__, 'views/templates/hook/display_header.tpl');
     }
 
