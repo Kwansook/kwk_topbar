@@ -36,7 +36,7 @@ class Kwk_topbar extends Module
     {
         $this->name = 'kwk_topbar';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
         $this->author = 'Kwansook';
         $this->need_instance = 0;
         $this->bootstrap = true;

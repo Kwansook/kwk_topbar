@@ -2,7 +2,7 @@
 <module>
 	<name>kwk_topbar</name>
 	<displayName><![CDATA[Top Bar]]></displayName>
-	<version><![CDATA[1.0.0]]></version>
+	<version><![CDATA[1.0.1]]></version>
 	<description><![CDATA[Add top bar on your website]]></description>
 	<author><![CDATA[Kwansook]]></author>
 	<tab><![CDATA[front_office_features]]></tab>
