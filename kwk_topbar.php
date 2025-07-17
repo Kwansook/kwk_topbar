@@ -28,6 +28,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+require_once __DIR__ . '/classes/KwkTopbar.php';
+
 class Kwk_topbar extends Module
 {
     protected $config_form = false;
@@ -56,14 +58,12 @@ class Kwk_topbar extends Module
             $this->registerHook('header') &&
             $this->registerHook('displayBackOfficeHeader') &&
             $this->registerHook('displayHeader') && 
-            $this->installTab() &&
-            Configuration::updateValue('KWK_TOPBAR_IS_ACTIVE', false);
+            $this->installTab();
     }
 
     public function uninstall()
     {
-        return Configuration::deleteByName('KWK_TOPBAR_IS_ACTIVE') &&
-            $this->dropTable() &&
+        return $this->dropTable() &&
             $this->uninstallTab() &&
             parent::uninstall();
     }
@@ -118,13 +118,7 @@ class Kwk_topbar extends Module
 
     public function getContent()
     {
-        if (Tools::isSubmit('submitKwk_topbarModule')) {
-            $this->postProcess();
-            $this->clearCache();
-            $this->context->controller->confirmations[] = $this->trans('Settings updated.', [], 'Modules.Kwk_topbar.Admin');
-        }
-
-        return $this->renderForm();
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminKwkTopbar'));
     }
 
     protected function renderForm()
@@ -150,49 +144,9 @@ class Kwk_topbar extends Module
         return $helper->generateForm(array($this->getConfigForm()));
     }
 
-    protected function getConfigForm()
-    {
-        return [
-            'form' => [
-                'legend' => [
-                    'title' => $this->trans('Settings', [], 'Modules.Kwk_topbar.Admin'),
-                    'icon' => 'icon-cogs',
-                ],
-                'input' => [
-                    [
-                        'type' => 'switch',
-                        'label' => $this->trans('Display Top Bar', [], 'Modules.Kwk_topbar.Admin'),
-                        'name' => 'KWK_TOPBAR_IS_ACTIVE',
-                        'is_bool' => true,
-                        'desc' => $this->trans('Enable or disable the top bar on your website.', [], 'Modules.Kwk_topbar.Admin'),
-                        'values' => [
-                            ['id' => 'active_on', 'value' => true, 'label' => $this->trans('Enabled', [], 'Modules.Kwk_topbar.Admin')],
-                            ['id' => 'active_off', 'value' => false, 'label' => $this->trans('Disabled', [], 'Modules.Kwk_topbar.Admin')],
-                        ],
-                    ],
-                ],
-                'submit' => [
-                    'title' => $this->trans('Save', [], 'Admin.Actions'),
-                ],
-            ],
-        ];
-    }
-
-    protected function getConfigFormValues()
-    {
-        return [
-            'KWK_TOPBAR_IS_ACTIVE' => Configuration::get('KWK_TOPBAR_IS_ACTIVE', true),
-        ];
-    }
-
-    protected function postProcess()
-    {
-        Configuration::updateValue('KWK_TOPBAR_IS_ACTIVE', Tools::getValue('KWK_TOPBAR_IS_ACTIVE'));
-    }
-
     public function hookDisplayBackOfficeHeader()
     {
-        if (Tools::getValue('configure') == $this->name) {
+        if (Tools::getValue('controller') === 'AdminKwkTopbar') {
             $this->context->controller->addJS($this->_path.'views/js/topbar_back.js', 'all');
             $this->context->controller->addCSS($this->_path.'views/css/topbar_back.css');
         }
@@ -200,13 +154,15 @@ class Kwk_topbar extends Module
 
     public function hookDisplayHeader()
     {
-        if(!Configuration::get('KWK_TOPBAR_IS_ACTIVE')) {
+        $topbars = KwkTopbar::getActiveTopbars();
+        if (empty($topbars)) {
             return;
         }
-        $this->clearCache();
+
         $this->context->controller->addCSS($this->_path . 'views/css/topbar.css', 'all', 100);
         $this->context->controller->addJS($this->_path . 'views/js/topbar.js');
 
+        $this->context->smarty->assign('topbars', $topbars);
         return $this->display(__FILE__, 'views/templates/hook/display_header.tpl');
     }
 
