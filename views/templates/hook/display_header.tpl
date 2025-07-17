@@ -17,20 +17,18 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
 
- <!-- Block kwk_topbar -->
+<!-- Block kwk_topbar -->
 <div id="kwk_topbar">
-	<div id="kwk_topbar-info-1" class="header-info active">
-		<a class="d-block cursor-pointer" style="background-color: #696969;color: #ffffff;" href="#">
+	<div id="kwk_topbar-info-1" class="header-info active" style="background-color: #6b6b6b;color: #ffffff;">
          💡 Lorem Ipsum is simply dummy text of the printing and typesetting industry. 🎁	
-		</a>
 	</div>
-	<div id="kwk_topbar-info-2" class="header-info">
-      <a class="d-block cursor-pointer" style="background-color: #696969;color: #ffffff;" href="#">
+	<div id="kwk_topbar-info-2" class="header-info" style="background-color: #6b6b6b;color: #ffffff;">
+      <a href="#">
          🚨 <strong>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</strong> c'est parti ! 🚨		
       </a>
 	</div>
-	<div id="kwk_topbar-info-3" class="header-info">
-      <a class="d-block cursor-pointer" style="background-color: #6b6b6b;color: #ffffff;" href="#">
+	<div id="kwk_topbar-info-3" class="header-info" style="background-color: #6b6b6b;color: #ffffff;">
+      <a href="#">
          Lorem Ipsum is not simply random text. It has roots ! 	 💶	
       </a>
 	</div>

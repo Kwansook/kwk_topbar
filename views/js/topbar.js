@@ -27,5 +27,22 @@
 */
 
 document.addEventListener('DOMContentLoaded', function() {
+    const topbar = document.getElementById('kwk_topbar');
+    if (!topbar) return;
+
+    const messages = topbar.querySelectorAll('.header-info');
+    let currentIndex = 0;
+
+    function showNextMessage() {
+        messages.forEach((msg, index) => {
+            msg.classList.toggle('active', index === currentIndex);
+        });
+        currentIndex = (currentIndex + 1) % messages.length;
+    }
+
+    showNextMessage();
+
+    setInterval(showNextMessage, 5000);
+
     console.log('Kwk Topbar JS loaded');
 });
