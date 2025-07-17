@@ -32,6 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const messages = topbar.querySelectorAll('.header-info');
     let currentIndex = 0;
+    const defaultInterval = 5000; // 5 secondes par défaut
+    const rotationInterval = parseInt(topbar.getAttribute('data-rotation-interval')) || defaultInterval;
 
     function showNextMessage() {
         messages.forEach((msg, index) => {
@@ -40,9 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
         currentIndex = (currentIndex + 1) % messages.length;
     }
 
+    // Afficher le premier message immédiatement
     showNextMessage();
 
-    setInterval(showNextMessage, 5000);
+    // Changer de message selon l'intervalle défini
+    setInterval(showNextMessage, rotationInterval);
 
-    console.log('Kwk Topbar JS loaded');
+    console.log('Kwk Topbar JS loaded, rotation interval: ' + rotationInterval + 'ms');
 });

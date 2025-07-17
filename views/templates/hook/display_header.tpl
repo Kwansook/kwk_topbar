@@ -18,8 +18,8 @@
  *}
 
 <!-- Block kwk_topbar -->
-<div id="kwk_topbar">
-	{foreach from=$topbars item=topbar name=topbars}
+<div id="kwk_topbar" data-rotation-interval="{$rotation_interval|escape:'html'}">
+    {foreach from=$topbars item=topbar name=topbars}
         <div id="kwk_topbar-info-{$topbar.id_kwk_topbar}" class="header-info {if $smarty.foreach.topbars.first}active{/if}" style="background-color: {$topbar.background_color|escape:'html'}; color: {$topbar.text_color|escape:'html'};">
             {if $topbar.link}
                 <a class="topbar-content" href="{$topbar.link|escape:'html'}" {if $topbar.target_blank}target="_blank"{/if}>

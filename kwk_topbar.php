@@ -53,19 +53,24 @@ class Kwk_topbar extends Module
 
     public function install()
     {
-        return parent::install() &&
-            $this->createTable() &&
-            $this->registerHook('header') &&
-            $this->registerHook('displayBackOfficeHeader') &&
-            $this->registerHook('displayHeader') && 
-            $this->installTab();
+        return parent::install()
+            && $this->createTable()
+            && $this->installTab()
+            && $this->registerHook('displayHeader')
+            && $this->registerHook('displayBackOfficeHeader')
+            && Configuration::updateValue('KWK_TOPBAR_ROTATION_INTERVAL', 5)
+            && Configuration::updateValue('KWK_TOPBAR_DEFAULT_BG_COLOR', '#6b6b6b')
+            && Configuration::updateValue('KWK_TOPBAR_DEFAULT_TEXT_COLOR', '#ffffff');
     }
 
     public function uninstall()
     {
-        return $this->dropTable() &&
-            $this->uninstallTab() &&
-            parent::uninstall();
+        return parent::uninstall()
+            && $this->dropTable()
+            && $this->uninstallTab()
+            && Configuration::deleteByName('KWK_TOPBAR_ROTATION_INTERVAL')
+            && Configuration::deleteByName('KWK_TOPBAR_DEFAULT_BG_COLOR')
+            && Configuration::deleteByName('KWK_TOPBAR_DEFAULT_TEXT_COLOR');
     }
 
     private function createTable()
@@ -101,7 +106,7 @@ class Kwk_topbar extends Module
         foreach (Language::getLanguages(true) as $lang) {
             $tab->name[$lang['id_lang']] = 'Top Bar';
         }
-        $tab->id_parent = (int)Tab::getIdFromClassName('DEFAULT');
+        $tab->id_parent = (int)Tab::getIdFromClassName('AdminModules');
         $tab->module = $this->name;
         return $tab->add();
     }
@@ -118,30 +123,85 @@ class Kwk_topbar extends Module
 
     public function getContent()
     {
-        Tools::redirectAdmin($this->context->link->getAdminLink('AdminKwkTopbar'));
+       if (Tools::isSubmit('submitKwkTopbarConfig')) {
+            $this->postProcess();
+            $this->context->controller->confirmations[] = 'Settings updated.';
+        }
+
+        $output = $this->renderForm();
+        $output .= '<a href="' . $this->context->link->getAdminLink('AdminKwkTopbar') . '" class="btn btn-primary">Manage Top Bars</a>';
+        return $output;
     }
 
     protected function renderForm()
     {
         $helper = new HelperForm();
-
         $helper->show_toolbar = false;
         $helper->table = $this->table;
         $helper->module = $this;
         $helper->default_form_language = $this->context->language->id;
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
         $helper->identifier = $this->identifier;
-        $helper->submit_action = 'submitKwk_topbarModule';
+        $helper->submit_action = 'submitKwkTopbarConfig';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
-            .'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+            . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->tpl_vars = array(
-            'fields_value' => $this->getConfigFormValues(), /* Add values for your inputs */
+        $helper->tpl_vars = [
+            'fields_value' => $this->getConfigFormValues(),
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
-        );
+        ];
 
-        return $helper->generateForm(array($this->getConfigForm()));
+        return $helper->generateForm([$this->getConfigForm()]);
+    }
+
+    protected function getConfigForm()
+    {
+        return [
+            'form' => [
+                'legend' => ['title' => 'General Settings', 'icon' => 'icon-cogs'],
+                'input' => [
+                    [
+                        'type' => 'text',
+                        'label' => 'Rotation Interval (seconds)',
+                        'name' => 'KWK_TOPBAR_ROTATION_INTERVAL',
+                        'desc' => 'Time between top bar messages (in seconds).',
+                        'required' => true,
+                    ],
+                    [
+                        'type' => 'color',
+                        'label' => 'Default Background Color',
+                        'name' => 'KWK_TOPBAR_DEFAULT_BG_COLOR',
+                        'desc' => 'Default background color for top bars.',
+                        'required' => true,
+                    ],
+                    [
+                        'type' => 'color',
+                        'label' => 'Default Text Color',
+                        'name' => 'KWK_TOPBAR_DEFAULT_TEXT_COLOR',
+                        'desc' => 'Default text color for top bars.',
+                        'required' => true,
+                    ],
+                ],
+                'submit' => ['title' => 'Save'],
+            ],
+        ];
+    }
+
+    protected function getConfigFormValues()
+    {
+        return [
+            'KWK_TOPBAR_ROTATION_INTERVAL' => Configuration::get('KWK_TOPBAR_ROTATION_INTERVAL', 5),
+            'KWK_TOPBAR_DEFAULT_BG_COLOR' => Configuration::get('KWK_TOPBAR_DEFAULT_BG_COLOR', '#6b6b6b'),
+            'KWK_TOPBAR_DEFAULT_TEXT_COLOR' => Configuration::get('KWK_TOPBAR_DEFAULT_TEXT_COLOR', '#ffffff'),
+        ];
+    }
+
+    protected function postProcess()
+    {
+        Configuration::updateValue('KWK_TOPBAR_ROTATION_INTERVAL', (int)Tools::getValue('KWK_TOPBAR_ROTATION_INTERVAL'));
+        Configuration::updateValue('KWK_TOPBAR_DEFAULT_BG_COLOR', Tools::getValue('KWK_TOPBAR_DEFAULT_BG_COLOR'));
+        Configuration::updateValue('KWK_TOPBAR_DEFAULT_TEXT_COLOR', Tools::getValue('KWK_TOPBAR_DEFAULT_TEXT_COLOR'));
     }
 
     public function hookDisplayBackOfficeHeader()
@@ -162,7 +222,13 @@ class Kwk_topbar extends Module
         $this->context->controller->addCSS($this->_path . 'views/css/topbar.css', 'all', 100);
         $this->context->controller->addJS($this->_path . 'views/js/topbar.js');
 
-        $this->context->smarty->assign('topbars', $topbars);
+        $this->context->smarty->assign([
+            'topbars' => $topbars,
+            'rotation_interval' => (int)Configuration::get('KWK_TOPBAR_ROTATION_INTERVAL', 5000),
+            'default_bg_color' => Configuration::get('KWK_TOPBAR_DEFAULT_BG_COLOR', '#6b6b6b'),
+            'default_text_color' => Configuration::get('KWK_TOPBAR_DEFAULT_TEXT_COLOR', '#ffffff'),
+        ]);
+        
         return $this->display(__FILE__, 'views/templates/hook/display_header.tpl');
     }
 

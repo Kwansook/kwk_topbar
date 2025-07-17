@@ -16,7 +16,7 @@ class AdminKwkTopbarController extends ModuleAdminController
 
         $this->fields_list = [
             'id_kwk_topbar' => ['title' => 'ID', 'align' => 'center', 'class' => 'fixed-width-xs'],
-            'content' => ['title' => 'Content', 'maxlength' => 100], // Limite l'affichage
+            'content' => ['title' => 'Content', 'maxlength' => 100],
             'date_start' => ['title' => 'Start Date', 'type' => 'datetime'],
             'date_end' => ['title' => 'End Date', 'type' => 'datetime'],
             'background_color' => ['title' => 'Background Color', 'class' => 'fixed-width-sm'],
@@ -55,13 +55,13 @@ class AdminKwkTopbarController extends ModuleAdminController
                     'type' => 'color',
                     'label' => 'Background Color',
                     'name' => 'background_color',
-                    'required' => true,
+                    'desc' => 'Leave empty to use default: ' . Configuration::get('KWK_TOPBAR_DEFAULT_BG_COLOR'),
                 ],
                 [
                     'type' => 'color',
                     'label' => 'Text Color',
                     'name' => 'text_color',
-                    'required' => true,
+                    'desc' => 'Leave empty to use default: ' . Configuration::get('KWK_TOPBAR_DEFAULT_TEXT_COLOR'),
                 ],
                 [
                     'type' => 'switch',

@@ -29,11 +29,19 @@ class KwkTopbar extends ObjectModel
     public static function getActiveTopbars()
     {
         $now = date('Y-m-d H:i:s');
-        return Db::getInstance()->executeS(
-            'SELECT * FROM ' . _DB_PREFIX_ . 'kwk_topbar 
+        $default_bg_color = Configuration::get('KWK_TOPBAR_DEFAULT_BG_COLOR', '#6b6b6b');
+        $default_text_color = Configuration::get('KWK_TOPBAR_DEFAULT_TEXT_COLOR', '#ffffff');
+
+        $topbars = Db::getInstance()->executeS(
+            'SELECT *, 
+                COALESCE(NULLIF(background_color, ""), \'' . pSQL($default_bg_color) . '\') AS background_color,
+                COALESCE(NULLIF(text_color, ""), \'' . pSQL($default_text_color) . '\') AS text_color
+            FROM ' . _DB_PREFIX_ . 'kwk_topbar 
             WHERE active = 1 
             AND (date_start IS NULL OR date_start <= \'' . pSQL($now) . '\')
             AND (date_end IS NULL OR date_end >= \'' . pSQL($now) . '\')'
         );
+
+        return $topbars;
     }
 }
