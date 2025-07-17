@@ -39,29 +39,20 @@ class Kwk_topbar extends Module
         $this->version = '1.0.0';
         $this->author = 'Kwansook';
         $this->need_instance = 0;
-
-        /**
-         * Set $this->bootstrap to true if your module is compliant with bootstrap (PrestaShop 1.6)
-         */
         $this->bootstrap = true;
 
         parent::__construct();
 
-        $this->displayName = $this->l('Top Bar');
-        $this->description = $this->l('Add top bar on your website');
+        $this->displayName = $this->trans('Top Bar', [], 'Modules.Kwk_topbar.Admin');
+        $this->description = $this->trans('Add top bar on your website', [], 'Modules.Kwk_topbar.Admin');
 
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
     }
 
-    /**
-     * Don't forget to create update methods if needed:
-     * http://doc.prestashop.com/display/PS16/Enabling+the+Auto-Update
-     */
     public function install()
     {
-        Configuration::updateValue('KWK_TOPBAR_LIVE_MODE', false);
-
         return parent::install() &&
+            Configuration::updateValue('KWK_TOPBAR_IS_ACTIVE', false) &&
             $this->registerHook('header') &&
             $this->registerHook('displayBackOfficeHeader') &&
             $this->registerHook('displayHeader');
@@ -69,33 +60,21 @@ class Kwk_topbar extends Module
 
     public function uninstall()
     {
-        Configuration::deleteByName('KWK_TOPBAR_LIVE_MODE');
-
-        return parent::uninstall();
+        return Configuration::deleteByName('KWK_TOPBAR_IS_ACTIVE') &&
+            parent::uninstall();
     }
 
-    /**
-     * Load the configuration form
-     */
     public function getContent()
     {
-        /**
-         * If values have been submitted in the form, process.
-         */
-        if (((bool)Tools::isSubmit('submitKwk_topbarModule')) == true) {
+        if (Tools::isSubmit('submitKwk_topbarModule')) {
             $this->postProcess();
+            $this->clearCache();
+            $this->context->controller->confirmations[] = $this->trans('Settings updated.', [], 'Modules.Kwk_topbar.Admin');
         }
 
-        $this->context->smarty->assign('module_dir', $this->_path);
-
-        $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
-
-        return $output.$this->renderForm();
+        return $this->renderForm();
     }
 
-    /**
-     * Create the form that will be displayed in the configuration of your module.
-     */
     protected function renderForm()
     {
         $helper = new HelperForm();
@@ -105,13 +84,11 @@ class Kwk_topbar extends Module
         $helper->module = $this;
         $helper->default_form_language = $this->context->language->id;
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
-
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitKwk_topbarModule';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
             .'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
-
         $helper->tpl_vars = array(
             'fields_value' => $this->getConfigFormValues(), /* Add values for your inputs */
             'languages' => $this->context->controller->getLanguages(),
@@ -121,56 +98,32 @@ class Kwk_topbar extends Module
         return $helper->generateForm(array($this->getConfigForm()));
     }
 
-    /**
-     * Create the structure of your form.
-     */
     protected function getConfigForm()
     {
-        return array(
-            'form' => array(
-                'legend' => array(
-                'title' => $this->l('Settings'),
-                'icon' => 'icon-cogs',
-                ),
-                'input' => array(
-                    array(
+        return [
+            'form' => [
+                'legend' => [
+                    'title' => $this->trans('Settings', [], 'Modules.Kwk_topbar.Admin'),
+                    'icon' => 'icon-cogs',
+                ],
+                'input' => [
+                    [
                         'type' => 'switch',
-                        'label' => $this->l('Live mode'),
-                        'name' => 'KWK_TOPBAR_LIVE_MODE',
+                        'label' => $this->trans('Display Top Bar', [], 'Modules.Kwk_topbar.Admin'),
+                        'name' => 'KWK_TOPBAR_IS_ACTIVE',
                         'is_bool' => true,
-                        'desc' => $this->l('Use this module in live mode'),
-                        'values' => array(
-                            array(
-                                'id' => 'active_on',
-                                'value' => true,
-                                'label' => $this->l('Enabled')
-                            ),
-                            array(
-                                'id' => 'active_off',
-                                'value' => false,
-                                'label' => $this->l('Disabled')
-                            )
-                        ),
-                    ),
-                    array(
-                        'col' => 3,
-                        'type' => 'text',
-                        'prefix' => '<i class="icon icon-envelope"></i>',
-                        'desc' => $this->l('Enter a valid email address'),
-                        'name' => 'KWK_TOPBAR_ACCOUNT_EMAIL',
-                        'label' => $this->l('Email'),
-                    ),
-                    array(
-                        'type' => 'password',
-                        'name' => 'KWK_TOPBAR_ACCOUNT_PASSWORD',
-                        'label' => $this->l('Password'),
-                    ),
-                ),
-                'submit' => array(
-                    'title' => $this->l('Save'),
-                ),
-            ),
-        );
+                        'desc' => $this->trans('Enable or disable the top bar on your website.', [], 'Modules.Kwk_topbar.Admin'),
+                        'values' => [
+                            ['id' => 'active_on', 'value' => true, 'label' => $this->trans('Enabled', [], 'Modules.Kwk_topbar.Admin')],
+                            ['id' => 'active_off', 'value' => false, 'label' => $this->trans('Disabled', [], 'Modules.Kwk_topbar.Admin')],
+                        ],
+                    ],
+                ],
+                'submit' => [
+                    'title' => $this->trans('Save', [], 'Admin.Actions'),
+                ],
+            ],
+        ];
     }
 
     /**
@@ -178,11 +131,9 @@ class Kwk_topbar extends Module
      */
     protected function getConfigFormValues()
     {
-        return array(
-            'KWK_TOPBAR_LIVE_MODE' => Configuration::get('KWK_TOPBAR_LIVE_MODE', true),
-            'KWK_TOPBAR_ACCOUNT_EMAIL' => Configuration::get('KWK_TOPBAR_ACCOUNT_EMAIL', 'contact@prestashop.com'),
-            'KWK_TOPBAR_ACCOUNT_PASSWORD' => Configuration::get('KWK_TOPBAR_ACCOUNT_PASSWORD', null),
-        );
+        return [
+            'KWK_TOPBAR_IS_ACTIVE' => Configuration::get('KWK_TOPBAR_IS_ACTIVE', true),
+        ];
     }
 
     /**
@@ -190,11 +141,7 @@ class Kwk_topbar extends Module
      */
     protected function postProcess()
     {
-        $form_values = $this->getConfigFormValues();
-
-        foreach (array_keys($form_values) as $key) {
-            Configuration::updateValue($key, Tools::getValue($key));
-        }
+        Configuration::updateValue('KWK_TOPBAR_IS_ACTIVE', Tools::getValue('KWK_TOPBAR_IS_ACTIVE'));
     }
 
     /**
@@ -203,22 +150,26 @@ class Kwk_topbar extends Module
     public function hookDisplayBackOfficeHeader()
     {
         if (Tools::getValue('configure') == $this->name) {
-            $this->context->controller->addJS($this->_path.'views/js/back.js');
-            $this->context->controller->addCSS($this->_path.'views/css/back.css');
+            $this->context->controller->addJS($this->_path.'views/js/topbar_back.js', 'all');
+            $this->context->controller->addCSS($this->_path.'views/css/topbar_back.css');
         }
-    }
-
-    /**
-     * Add the CSS & JavaScript files you want to be added on the FO.
-     */
-    public function hookHeader()
-    {
-        $this->context->controller->addJS($this->_path.'/views/js/front.js');
-        $this->context->controller->addCSS($this->_path.'/views/css/front.css');
     }
 
     public function hookDisplayHeader()
     {
-        /* Place your code here. */
+        if(!Configuration::get('KWK_TOPBAR_IS_ACTIVE')) {
+            return;
+        }
+        $this->clearCache();
+        $this->context->controller->addCSS($this->_path . 'views/css/topbar.css', 'all', 100);
+        $this->context->controller->addJS($this->_path . 'views/js/topbar.js');
+
+        return $this->display(__FILE__, 'views/templates/hook/display_header.tpl');
     }
+
+    public function clearCache()
+    {
+        $this->_clearCache('display_header.tpl');
+    }
+
 }
