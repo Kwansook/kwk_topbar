@@ -30,6 +30,7 @@ div#kwk_topbar {
     overflow: hidden;
     position: relative;
     height: 2rem;
+    text-align: center;
 }
     div#kwk_topbar .header-info {
         position: absolute;
@@ -45,13 +46,3 @@ div#kwk_topbar {
         transform: translateY(0%);
         opacity: 1;
     }
-
-        div#kwk_topbar .header-info button {
-            position: absolute;
-            top: 0.2rem;
-            right: 1rem;
-            opacity: 45%;
-        }
-        div#kwk_topbar .header-info button:hover {
-            opacity: 100%;
-        }

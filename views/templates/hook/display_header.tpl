@@ -18,20 +18,20 @@
  *}
 
  <!-- Block kwk_topbar -->
-<div id="kwk_topbar" class="header-info-wrapper">
-	<div id="header-info-541" class="header-info active">
-		<a class="d-block text-center py-2 mb-1 cursor-pointer" style="background-color: #696969;color: #ffffff;" href="/nosideescadeaux/">
-         💡 Nos <strong>idées cadeaux</strong> 🎁	
+<div id="kwk_topbar">
+	<div id="kwk_topbar-info-1" class="header-info active">
+		<a class="d-block cursor-pointer" style="background-color: #696969;color: #ffffff;" href="#">
+         💡 Lorem Ipsum is simply dummy text of the printing and typesetting industry. 🎁	
 		</a>
 	</div>
-	<div id="header-info-707" class="header-info">
-      <a class="d-block text-center py-2 mb-1 cursor-pointer" style="background-color: #696969;color: #ffffff;" href="/promos-ete.html">
-         🚨 Les <strong>PROMOS D'ÉTÉ</strong> c'est parti ! 🚨		
+	<div id="kwk_topbar-info-2" class="header-info">
+      <a class="d-block cursor-pointer" style="background-color: #696969;color: #ffffff;" href="#">
+         🚨 <strong>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</strong> c'est parti ! 🚨		
       </a>
 	</div>
-	<div id="header-info-234" class="header-info">
-      <a class="d-block text-center py-2 mb-1 cursor-pointer" style="background-color: #6b6b6b;color: #ffffff;" href="/paiement-plusieurs-fois.html">
-         PAIEMENT JUSQU'À <strong>4 FOIS SANS FRAIS</strong> ! 	 💶	
+	<div id="kwk_topbar-info-3" class="header-info">
+      <a class="d-block cursor-pointer" style="background-color: #6b6b6b;color: #ffffff;" href="#">
+         Lorem Ipsum is not simply random text. It has roots ! 	 💶	
       </a>
 	</div>
 </div>
