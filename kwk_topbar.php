@@ -163,9 +163,9 @@ class Kwk_topbar extends Module
                 'input' => [
                     [
                         'type' => 'text',
-                        'label' => 'Rotation Interval (seconds)',
+                        'label' => 'Rotation Interval (milliseconds)',
                         'name' => 'KWK_TOPBAR_ROTATION_INTERVAL',
-                        'desc' => 'Time between top bar messages (in seconds).',
+                        'desc' => 'Time between top bar messages (in milliseconds).',
                         'required' => true,
                     ],
                     [
