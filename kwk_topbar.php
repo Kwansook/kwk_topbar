@@ -52,16 +52,68 @@ class Kwk_topbar extends Module
     public function install()
     {
         return parent::install() &&
-            Configuration::updateValue('KWK_TOPBAR_IS_ACTIVE', false) &&
+            $this->createTable() &&
             $this->registerHook('header') &&
             $this->registerHook('displayBackOfficeHeader') &&
-            $this->registerHook('displayHeader');
+            $this->registerHook('displayHeader') && 
+            $this->installTab() &&
+            Configuration::updateValue('KWK_TOPBAR_IS_ACTIVE', false);
     }
 
     public function uninstall()
     {
         return Configuration::deleteByName('KWK_TOPBAR_IS_ACTIVE') &&
+            $this->dropTable() &&
+            $this->uninstallTab() &&
             parent::uninstall();
+    }
+
+    private function createTable()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "kwk_topbar` (
+            `id_kwk_topbar` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `content` TEXT NOT NULL,
+            `date_start` DATETIME DEFAULT NULL,
+            `date_end` DATETIME DEFAULT NULL,
+            `background_color` VARCHAR(7) NOT NULL DEFAULT '#6b6b6b',
+            `text_color` VARCHAR(7) NOT NULL DEFAULT '#ffffff',
+            `active` TINYINT(1) NOT NULL DEFAULT 1,
+            `link` VARCHAR(255) DEFAULT NULL,
+            `target_blank` TINYINT(1) NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id_kwk_topbar`)
+        ) ENGINE=" . _MYSQL_ENGINE_ . " DEFAULT CHARSET=utf8;";
+
+        return Db::getInstance()->execute($sql);
+    }
+
+    private function dropTable()
+    {
+        $sql = "DROP TABLE IF EXISTS `" . _DB_PREFIX_ . "kwk_topbar`;";
+        return Db::getInstance()->execute($sql);
+    }
+    
+    private function installTab()
+    {
+        $tab = new Tab();
+        $tab->active = 1;
+        $tab->class_name = 'AdminKwkTopbar';
+        $tab->name = [];
+        foreach (Language::getLanguages(true) as $lang) {
+            $tab->name[$lang['id_lang']] = 'Top Bar';
+        }
+        $tab->id_parent = (int)Tab::getIdFromClassName('DEFAULT');
+        $tab->module = $this->name;
+        return $tab->add();
+    }
+
+    private function uninstallTab()
+    {
+        $id_tab = (int)Tab::getIdFromClassName('AdminKwkTopbar');
+        if ($id_tab) {
+            $tab = new Tab($id_tab);
+            return $tab->delete();
+        }
+        return true;
     }
 
     public function getContent()
@@ -126,9 +178,6 @@ class Kwk_topbar extends Module
         ];
     }
 
-    /**
-     * Set values for the inputs.
-     */
     protected function getConfigFormValues()
     {
         return [
@@ -136,17 +185,11 @@ class Kwk_topbar extends Module
         ];
     }
 
-    /**
-     * Save form data.
-     */
     protected function postProcess()
     {
         Configuration::updateValue('KWK_TOPBAR_IS_ACTIVE', Tools::getValue('KWK_TOPBAR_IS_ACTIVE'));
     }
 
-    /**
-    * Add the CSS & JavaScript files you want to be loaded in the BO.
-    */
     public function hookDisplayBackOfficeHeader()
     {
         if (Tools::getValue('configure') == $this->name) {
