@@ -46,3 +46,11 @@ div#kwk_topbar {
         transform: translateY(0%);
         opacity: 1;
     }
+
+    div#kwk_topbar .header-info .topbar-content {
+        display: block;
+        width: 100%;
+        height: 100%;
+        line-height: 2rem; /* Centrage vertical fallback */
+        text-decoration: none; /* Pour les <a> */
+    }

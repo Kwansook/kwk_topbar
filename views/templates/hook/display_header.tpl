@@ -20,15 +20,17 @@
 <!-- Block kwk_topbar -->
 <div id="kwk_topbar">
 	<div id="kwk_topbar-info-1" class="header-info active" style="background-color: #6b6b6b;color: #ffffff;">
-         💡 Lorem Ipsum is simply dummy text of the printing and typesetting industry. 🎁	
+        <span class="topbar-content">
+		💡 Lorem Ipsum is simply dummy text of the printing and typesetting industry. 🎁
+		</span>	
 	</div>
-	<div id="kwk_topbar-info-2" class="header-info" style="background-color: #6b6b6b;color: #ffffff;">
-      <a href="#">
+	<div id="kwk_topbar-info-2" class="header-info" style="background-color: #d42525ff;color: #ffffff;">
+      <a class="topbar-content" href="#">
          🚨 <strong>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</strong> c'est parti ! 🚨		
       </a>
 	</div>
-	<div id="kwk_topbar-info-3" class="header-info" style="background-color: #6b6b6b;color: #ffffff;">
-      <a href="#">
+	<div id="kwk_topbar-info-3" class="header-info" style="background-color: #2a6eb2ff;color: #ffffff;">
+      <a class="topbar-content" href="#">
          Lorem Ipsum is not simply random text. It has roots ! 	 💶	
       </a>
 	</div>
